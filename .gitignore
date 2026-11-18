@@ -1,0 +1,16 @@
+data/raw/
+artifacts/
+*.joblib
+*.pkl
+.env
+.env.*
+!.env.example
+*.json.key
+*service-account*.json
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+.venv*/
