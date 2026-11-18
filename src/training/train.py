@@ -48,25 +48,30 @@ def build_model():
 
 def main():
     logging.basicConfig(level=logging.INFO)
+    # Connect to the bucket and choose where to read and save files.
     bucket = storage.Client().bucket(os.environ["BUCKET_NAME"])
     source_name = os.environ.get("DATA_BLOB", "data/raw/data.csv")
     prefix = os.environ.get("OUTPUT_PREFIX", "models/latest").rstrip("/")
+    # Use a temporary folder for files while this job runs.
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         dataset = root / "data.csv"
         bucket.blob(source_name).download_to_filename(str(dataset))
 
+        # Clean the dataset, then keep 20% of each genre for testing.
         records, data_report = prepare_records(dataset)
         texts, labels = zip(*records)
         x_train, x_test, y_train, y_test = train_test_split(
             texts, labels, test_size=0.2, random_state=43, stratify=labels
         )
 
+        # Train the TF-IDF and logistic regression pipeline and test it.
         model = build_model()
         model.fit(x_train, y_train)
         predictions = model.predict(x_test)
         classes = list(model.classes_)
 
+        # Collect overall and per-genre evaluation results.
         report = {
             "dataset": data_report,
             "split": {"seed": 43, "train": len(x_train), "test": len(x_test)},
@@ -82,6 +87,7 @@ def main():
             ),
         }
 
+        # Save the trained model and report, then upload them to the bucket.
         model_path = root / "model.joblib"
         report_path = root / "evaluation.json"
         joblib.dump(model, model_path, compress=3)
