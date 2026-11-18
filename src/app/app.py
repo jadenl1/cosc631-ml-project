@@ -41,11 +41,15 @@ st.markdown(
 st.title("Book Genre Predictor")
 st.write("Enter a book summary to see the genres the model considers most likely.")
 
+
 @st.cache_resource
 def get_model():
     return load_model(os.environ.get("MODEL_PATH", "artifacts/model.joblib"))
 
-summary = st.text_area("Book summary", height=220, placeholder="Paste or type a book summary here...")
+
+summary = st.text_area(
+    "Book summary", height=220, placeholder="Paste or type a book summary here..."
+)
 if st.button("Predict Genre"):
     if not summary.strip():
         st.warning("Please enter a book summary.")
@@ -57,6 +61,8 @@ if st.button("Predict Genre"):
             st.write("**Top predicted genres**")
             for label, probability in results:
                 st.write(f"{label.title()}: {probability:.1%}")
-            st.caption("These are model estimates, not guaranteed or calibrated confidence scores.")
+            st.caption(
+                "These are model estimates, not guaranteed or calibrated confidence scores."
+            )
         except Exception:
             st.error("Prediction is currently unavailable. Please try again later.")

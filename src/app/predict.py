@@ -1,4 +1,5 @@
 """Load the trusted, project-built model and produce labeled probabilities."""
+
 import joblib
 
 
@@ -13,4 +14,8 @@ def predict(model, text):
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Please enter a book summary.")
     probabilities = model.predict_proba([text.strip()])[0]
-    return sorted(zip(model.classes_, map(float, probabilities)), key=lambda item: item[1], reverse=True)[:3]
+    return sorted(
+        zip(model.classes_, map(float, probabilities)),
+        key=lambda item: item[1],
+        reverse=True,
+    )[:3]

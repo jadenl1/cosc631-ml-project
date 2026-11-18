@@ -1,4 +1,5 @@
 """Validate and deduplicate the book summaries before splitting."""
+
 import csv
 import re
 from collections import Counter, defaultdict
@@ -32,7 +33,12 @@ def prepare_records(path):
         records.append(items[0])
         counts["duplicate_rows_removed"] += len(items) - 1
     counts["usable_rows"] = len(records)
-    counts["class_distribution"] = dict(sorted(Counter(label for _, label in records).items()))
-    if len(counts["class_distribution"]) < 2 or min(counts["class_distribution"].values()) < 2:
+    counts["class_distribution"] = dict(
+        sorted(Counter(label for _, label in records).items())
+    )
+    if (
+        len(counts["class_distribution"]) < 2
+        or min(counts["class_distribution"].values()) < 2
+    ):
         raise ValueError("At least two classes with two examples each are required")
     return records, dict(counts)
