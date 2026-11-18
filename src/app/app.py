@@ -6,6 +6,9 @@ st.set_page_config(page_title="Book Genre Predictor")
 st.markdown(
     """
     <style>
+        [data-testid="stToolbar"] {
+            display: none;
+        }
         .stApp, header[data-testid="stHeader"] {
             background-color: white;
             color: black;
